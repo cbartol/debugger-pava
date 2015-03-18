@@ -4,7 +4,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -24,6 +23,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
+.classpath
 
 # Eclipse Core
 .project
