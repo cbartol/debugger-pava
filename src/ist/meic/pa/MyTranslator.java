@@ -19,7 +19,7 @@ public class MyTranslator implements Translator {
 		
 		CtClass cc = pool.get(classname);
 		System.out.println(cc.toString());
-		if(cc.getClass().getName().contains("ist.meic") || cc.getClass().getName().contains("javassist")){
+		if(classname.contains("ist.meic") || classname.contains("javassist")){
 			return;
 		}
 		for (CtMethod m : cc.getDeclaredMethods()) {
@@ -31,18 +31,23 @@ public class MyTranslator implements Translator {
 				o = "null";
 			}
 			System.out.println(m.toString());
-			m.insertBefore("{ist.meic.pa.MetaStack.addInitialInformation($class,"+o+",\""+ m.getName() + "\", $args); }");// inserir informação sobre a classe do metodo
+			m.insertBefore("{ ist.meic.pa.MetaStack.addInitialInformation($class,"+o+",\""+ m.getName() + "\", $args); }");// inserir informação sobre a classe do metodo
 			
 			//m.insertAfter("", true);
-			String console = MyConsole.class.getName();
-			System.out.println(console);
-			m.addCatch("{ "+ console +".execute($e);"
-					+ "if("+console+".throwException()){"
+			String consoleClassname = MyConsole.class.getName();
+			System.out.println(consoleClassname);
+			boolean isVoid = m.getReturnType().equals(CtClass.voidType);
+			String returnVoid = "return;";
+			System.out.println(m.getReturnType().getName());
+			String returnNotVoid = "return (" + m.getReturnType().getName() + ") "+ consoleClassname +".getReturnValue();";
+			
+			m.addCatch("{"
+					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(" + m.getReturnType().getName() + ");"
+					+ "console.execute($e);"
+					+ "if(console.shouldThrowException()){"
 							+ "throw $e;"
-					+ "}else if("+ console +".returnTypeIsVoid()){"
-							+ " return;"
 					+ "}else{"
-							+ "return "+ console +".getReturnValue();"
+							+ ((isVoid)?returnVoid:returnNotVoid)
 					+ "}}", etype);
 		}
 		try {

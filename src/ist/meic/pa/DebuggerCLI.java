@@ -10,6 +10,7 @@ public class DebuggerCLI {
 	public static int value = 0;
 	
 	public static void main(String[] args) throws Throwable {
+		
 		ClassPool pool = ClassPool.getDefault();
 		Loader cl = new Loader();
 		Translator t = new MyTranslator();

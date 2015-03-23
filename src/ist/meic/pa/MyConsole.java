@@ -1,24 +1,73 @@
 package ist.meic.pa;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
 public class MyConsole {
+	private boolean continueRead = true;
+	private Command command;
+	private boolean throwException;
+	private Object returnValue;
+	private String returnType;
 	
+	public MyConsole(String returnType){
+		this.returnType = returnType;
+		command = new Command(this);
+	}
 	
-	public static void execute(Exception e){
+	public void execute(Exception e){
 		System.out.println("executing");
+		
+		Scanner in = new Scanner(System.in);
+		continueRead = true;
+		
+		try {
+			while(continueRead){
+				System.out.print("> ");
+				String line = in.nextLine();
+				List<String> shellArgs = new ArrayList<String>();
+				shellArgs.addAll(Arrays.asList(line.split(" ")));
+				
+				Method m = Command.class.getMethod(shellArgs.get(0), List.class );
+				shellArgs.remove(0);
+				m.invoke(command, shellArgs);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		in.close();
 	}
 	
-	public static boolean throwException(){
-		System.out.println("throw Exception?");
-		return false;
+	public boolean shouldThrowException(){
+		return throwException;
 	}
 	
-	public static boolean returnTypeIsVoid(){
+	public boolean returnTypeIsVoid(){
 		System.out.println("is void?");
 		return false;
 	}
 	
-	public static Object getReturnValue(){
-		System.out.println("returning");
-		return null;
+	public Object getReturnValue(){
+		return returnValue;
+	}
+	
+	public void throwException(){
+		throwException = true;
+		stopConsole();
+		MetaStack.popStack();
+	}
+	
+	public void stopConsole(){
+		continueRead = false;
+	}
+	
+	public void setReturnValue(Object o){
+		returnValue = o;
+	}
+	public String getReturnType() {
+		return returnType;
 	}
 }

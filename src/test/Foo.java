@@ -1,14 +1,18 @@
 package test;
 
-public class Foo implements ZZZ{
+public class Foo {
 
-	public void bar(int a) throws Exception{
+	public int bar(int a) throws Exception{
 		System.out.println("yooo1");
 		baz(a);
+		return 0;
 	}
 	
-	public void baz(int a) throws Exception{
+	public int baz(int a) throws Exception{
 		System.out.println("yooo2");
+		if(a < 0){
+			return 0;
+		}
 		throw new Exception("my exception");
 	}
 }
