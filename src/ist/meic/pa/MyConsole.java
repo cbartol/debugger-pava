@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class MyConsole {
 	private boolean continueRead = true;
 	private Command command;
-	private boolean throwException;
+	private boolean throwException = false;
 	private Object returnValue;
 	private String returnType;
 	
@@ -38,7 +38,7 @@ public class MyConsole {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		in.close();
+		//in.close();
 	}
 	
 	public boolean shouldThrowException(){

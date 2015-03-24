@@ -13,7 +13,7 @@ public class Foo {
 		if(a < 0){
 			return 0;
 		}
-		//throw new Exception("my exception");
-		return 99;
+		throw new Exception("my exception");
+		//return 99;
 	}
 }
