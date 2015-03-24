@@ -25,5 +25,14 @@ public class StackLayer {
 		return args;
 	}
 	
-	
+	public void print(){
+		String className = method.getDeclaringClass().getName();
+		String methodName = method.getName();
+		String argValues = "(";
+		for(Object arg : args){
+			argValues += arg + ",";
+		}
+		argValues = argValues.substring(0, argValues.length()-1) + ")";
+		System.out.println(className+"."+methodName+argValues);
+	}
 }

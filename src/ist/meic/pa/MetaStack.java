@@ -29,7 +29,7 @@ public class MetaStack {
 		System.out.println(stack.peek().getInstance());
 		System.out.println("Call stack:");
 		for (StackLayer stackLayer : stack) {
-			System.out.println(stackLayer.getMethod().getName() + stackLayer.getArgs());
+			stackLayer.print();
 		}
 	}
 
