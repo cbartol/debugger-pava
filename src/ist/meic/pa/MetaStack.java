@@ -26,8 +26,6 @@ public class MetaStack {
 	
 
 	public static void printStack() {
-		System.out.println(stack.peek().getInstance());
-		System.out.println("Call stack:");
 		for (StackLayer stackLayer : stack) {
 			stackLayer.print();
 		}

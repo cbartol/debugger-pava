@@ -53,6 +53,7 @@ public class MyTranslator implements Translator {
 			
 
 			String toAddCatchString = "{"
+					+ "System.out.println($e.getClass().getName() + \": \" + $e.getMessage());"
 					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(\"" + m.getReturnType().getName() + "\");"
 					+ "console.execute($e);"
 					+ "if(console.shouldThrowException()){"

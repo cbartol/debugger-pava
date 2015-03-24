@@ -20,6 +20,21 @@ public class Command {
 	}
 	
 	public void Info(List<String> args){
+		Object instance = MetaStack.getCurrentInstance();
+		System.out.println("Called Object:"+instance);
+		if(instance != null){
+			try {
+				String fieldsPrint = "\tFields:";
+				for (Field field : instance.getClass().getDeclaredFields()) {
+					field.setAccessible(true);
+					fieldsPrint += field.getName()+",";
+				}
+				System.out.println(fieldsPrint.substring(0, fieldsPrint.length()-1));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Call stack:");
 		MetaStack.printStack();
 	}
 	
@@ -48,7 +63,13 @@ public class Command {
 		}
 	}
 	
+	public <E> E cast(Object o){
+		return (E) o;
+	}
+	
 	public void Set(List<String> args){
+		int i = cast(new String());
+		boolean b = cast(new String());
 		Object instance = MetaStack.getCurrentInstance();
 		try {
 			if (instance == null){
