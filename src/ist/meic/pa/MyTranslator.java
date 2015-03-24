@@ -1,6 +1,7 @@
 package ist.meic.pa;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -30,8 +31,15 @@ public class MyTranslator implements Translator {
 			if(Modifier.isStatic(m.getModifiers())){
 				o = "null";
 			}
-			System.out.println(m.toString());
-			m.insertBefore("{ ist.meic.pa.MetaStack.addInitialInformation($class,"+o+",\""+ m.getName() + "\", $args); }");// inserir informação sobre a classe do metodo
+			System.err.println(m.toString());
+			
+			String insertBeforeInjectionString = "{ "
+					+ "Class[] args_types = " + convertParametersTypes(m) + ";"
+					+ "ist.meic.pa.MetaStack.addInitialInformation($class,"+o+", $args, \"" + m.getName() + "\", args_types); }";
+
+			System.err.println("INSERT BEFORE: " + insertBeforeInjectionString);
+						
+			m.insertBefore(insertBeforeInjectionString);// inserir informaï¿½ï¿½o sobre a classe do metodo
 			
 			//m.insertAfter("", true);
 			String consoleClassname = MyConsole.class.getName();
@@ -39,22 +47,36 @@ public class MyTranslator implements Translator {
 			boolean isVoid = m.getReturnType().equals(CtClass.voidType);
 			String returnVoid = "return;";
 			System.out.println(m.getReturnType().getName());
-			String returnNotVoid = "return (" + m.getReturnType().getName() + ") "+ consoleClassname +".getReturnValue();";
+			String returnNotVoid = "return (" + m.getReturnType().getName() + ") console.getReturnValue();";
 			
-			m.addCatch("{"
-					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(" + m.getReturnType().getName() + ");"
+			String toAddCatchString = "{"
+					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(\"" + m.getReturnType().getName() + "\");"
 					+ "console.execute($e);"
 					+ "if(console.shouldThrowException()){"
 							+ "throw $e;"
 					+ "}else{"
 							+ ((isVoid)?returnVoid:returnNotVoid)
-					+ "}}", etype);
+					+ "}}";
+			System.out.println(toAddCatchString);
+			m.addCatch(toAddCatchString, etype);
 		}
 		try {
 			cc.writeFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String convertParametersTypes(CtMethod m){
+		String output = "";
+		try {
+			for (CtClass c : m.getParameterTypes()) {
+				output += c.getName() + ".class,";
+			}
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		}
+		return "{" + output.substring(0, output.length() - 1) + "}";	
 	}
 
 	@Override

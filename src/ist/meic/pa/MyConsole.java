@@ -50,8 +50,12 @@ public class MyConsole {
 		return false;
 	}
 	
-	public Object getReturnValue(){
+	/*public Object getReturnValue(){
 		return returnValue;
+	}*/
+	
+	public int getReturnValue(){
+		return -1;
 	}
 	
 	public void throwException(){
