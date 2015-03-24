@@ -28,7 +28,9 @@ public class Command {
 	}
 	
 	public void Return(List<String> args){
+		System.err.println("ENTROU RETURN COMMAND.JAVA");
 		if(args.size() == 0){
+			console.stopConsole();
 			return;
 		}
 		console.setReturnValue(magicStringConverter(console.getReturnType(), args.get(0)));
@@ -48,7 +50,7 @@ public class Command {
 		Object instance = MetaStack.getCurrentInstance();
 		try {
 			String fieldType = instance.getClass().getField(args.get(0)).getType().getName();
-			instance.getClass().getField(args.get(0)).set(instance, magicStringConverter(fieldType, args.get(0)));
+			instance.getClass().getField(args.get(0)).set(instance, magicStringConverter(fieldType, args.get(1)));
 			System.out.println("set done!");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -24,8 +24,9 @@ public class MyConsole {
 		Scanner in = new Scanner(System.in);
 		continueRead = true;
 		
-		try {
+		
 			while(continueRead){
+				try {
 				System.out.print("> ");
 				String line = in.nextLine();
 				List<String> shellArgs = new ArrayList<String>();
@@ -34,10 +35,12 @@ public class MyConsole {
 				Method m = Command.class.getMethod(shellArgs.get(0), List.class );
 				shellArgs.remove(0);
 				m.invoke(command, shellArgs);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					System.err.println("Invalid Command");
+				}
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		
 		//in.close();
 	}
 	
@@ -55,7 +58,7 @@ public class MyConsole {
 	}*/
 	
 	public int getReturnValue(){
-		return -1;
+		return (int) returnValue;
 	}
 	
 	public void throwException(){
@@ -70,6 +73,7 @@ public class MyConsole {
 	
 	public void setReturnValue(Object o){
 		returnValue = o;
+		stopConsole();
 	}
 	public String getReturnType() {
 		return returnType;
