@@ -47,8 +47,11 @@ public class MyTranslator implements Translator {
 			boolean isVoid = m.getReturnType().equals(CtClass.voidType);
 			String returnVoid = "return;";
 			System.out.println(m.getReturnType().getName());
-			String returnNotVoid = "return (" + m.getReturnType().getName() + ") console.getReturnValue();";
+			String returnNotVoid = "return console.getReturnValue_" + m.getReturnType().getSimpleName() + "();";
 			
+			
+			
+
 			String toAddCatchString = "{"
 					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(\"" + m.getReturnType().getName() + "\");"
 					+ "console.execute($e);"

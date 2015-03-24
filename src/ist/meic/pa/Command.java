@@ -51,7 +51,6 @@ public class Command {
 	public void Set(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
 		try {
-			
 			if (instance == null){
 				System.err.println("NOT IMPLEMENTED YET, SET STATIC FIELDS");
 			} else{
@@ -84,7 +83,11 @@ public class Command {
 			methodName = "parse" + returnType;
 		}
 		try {
-			return Class.forName("java.lang." + returnType).getMethod(methodName, String.class).invoke(null, value);
+			if (returnType.contains("Java.lang.String")){
+				return value;
+			} else {
+				return Class.forName("java.lang." + returnType).getMethod(methodName, String.class).invoke(null, value);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		

@@ -4,9 +4,9 @@ public class Foo {
 	
 	private int field1 = 999;
 
-	public int bar(int a, int b) throws Exception{
+	public String bar(int a, int b) throws Exception{
 		System.out.println("yooo1");
-		return baz(a);
+		return "" + baz(a);
 	}
 	
 	public int baz(int a) throws Exception{

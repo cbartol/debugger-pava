@@ -53,13 +53,46 @@ public class MyConsole {
 		return false;
 	}
 	
-	/*public Object getReturnValue(){
-		return returnValue;
-	}*/
-	
-	public int getReturnValue(){
+
+	public int getReturnValue_int(){
 		return (int) returnValue;
 	}
+	
+	public boolean getReturnValue_boolean(){
+		return (boolean) returnValue;
+	}
+	
+	public long getReturnValue_long(){
+		return (long) returnValue;
+	}
+	
+	public float getReturnValue_float(){
+		return (float) returnValue;
+	}
+	
+	public double getReturnValue_double(){
+		return (double) returnValue;
+	}
+	
+	public byte getReturnValue_byte(){
+		return (byte) returnValue;
+	}
+	
+	public char getReturnValue_char(){
+		return (char) returnValue;
+	}
+	
+	public short getReturnValue_short(){
+		return (short) returnValue;
+	}
+	
+	public String getReturnValue_String(){
+		return (String) returnValue;
+	}
+	
+	
+	
+	
 	
 	public void throwException(){
 		throwException = true;
