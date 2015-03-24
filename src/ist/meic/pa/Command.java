@@ -62,14 +62,8 @@ public class Command {
 			e.printStackTrace();
 		}
 	}
-	
-	public <E> E cast(Object o){
-		return (E) o;
-	}
-	
+
 	public void Set(List<String> args){
-		int i = cast(new String());
-		boolean b = cast(new String());
 		Object instance = MetaStack.getCurrentInstance();
 		try {
 			if (instance == null){
