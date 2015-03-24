@@ -2,7 +2,7 @@ package test;
 
 public class Foo {
 	
-	public int field1 = 999;
+	private int field1 = 999;
 
 	public int bar(int a, int b) throws Exception{
 		System.out.println("yooo1");

@@ -1,6 +1,6 @@
 package ist.meic.pa;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,9 @@ public class Command {
 	public void Get(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
 		try {
-			System.out.println(instance.getClass().getField(args.get(0)).get(instance));
+			Field field = instance.getClass().getDeclaredField(args.get(0));
+			field.setAccessible(true);
+			System.out.println(field.get(instance));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,9 +51,16 @@ public class Command {
 	public void Set(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
 		try {
-			String fieldType = instance.getClass().getField(args.get(0)).getType().getName();
-			instance.getClass().getField(args.get(0)).set(instance, magicStringConverter(fieldType, args.get(1)));
-			System.out.println("set done!");
+			
+			if (instance == null){
+				System.err.println("NOT IMPLEMENTED YET, SET STATIC FIELDS");
+			} else{
+				Field field = instance.getClass().getDeclaredField(args.get(0));
+				field.setAccessible(true);
+				String fieldType = field.getType().getName();
+				field.set(instance, magicStringConverter(fieldType, args.get(1)));
+				System.out.println("set done!");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
