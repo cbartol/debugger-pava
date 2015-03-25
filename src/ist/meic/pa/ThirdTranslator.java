@@ -70,12 +70,13 @@ public class ThirdTranslator implements Translator {
 					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(\"%s\");" //return type
 					+ "console.execute(e);"
 					+ "if(console.shouldThrowException()){"
+							+ "ist.meic.pa.MetaStack.popStack();"
 							+ "throw e;"
 					+ "}else{"
 							+ "%s;" //return statement ((isVoid)?returnVoid:returnNotVoid)
 					+ "}"
 				+ "} finally {"
-						+ "ist.meic.pa.MetaStack.popStack();"
+						+  ((isMain)?"ist.meic.pa.MetaStack.popStack();":"")
 				+ "}"
 			+ "}";
 		

@@ -27,7 +27,7 @@ public class MyConsole {
 		
 		
 			while(continueRead){
-				e.printStackTrace();
+				//e.printStackTrace();
 				System.out.print("> ");
 				String line = in.nextLine();
 				List<String> shellArgs = new ArrayList<String>();
