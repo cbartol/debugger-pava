@@ -11,6 +11,7 @@ import javassist.Translator;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
+@DoNotInspect
 public class ThirdTranslator implements Translator {
 
 	@Override
@@ -18,7 +19,13 @@ public class ThirdTranslator implements Translator {
 			throws NotFoundException, CannotCompileException {
 		
 		CtClass cc = pool.get(classname);
-		if(classname.contains("ist.meic") || classname.contains("javassist")){
+		try {
+			if(cc.getAnnotation(DoNotInspect.class) != null){
+				return;
+			}
+		} catch (ClassNotFoundException e) {
+		}
+		if(classname.startsWith("javassist.")){
 			return;
 		}
 		for (CtMethod m : cc.getDeclaredMethods()) {

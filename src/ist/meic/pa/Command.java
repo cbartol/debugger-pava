@@ -3,7 +3,7 @@ package ist.meic.pa;
 import java.lang.reflect.Field;
 import java.util.List;
 
-
+@DoNotInspect
 public class Command {
 	private MyConsole console;
 	

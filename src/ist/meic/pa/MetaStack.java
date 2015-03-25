@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 
+@DoNotInspect
 public class MetaStack {
 	private static Stack<StackLayer> stack = new Stack<StackLayer>();
 	

@@ -1,7 +1,5 @@
 package ist.meic.pa;
 
-import java.io.IOException;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -11,6 +9,7 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.Translator;
 
+@DoNotInspect
 public class SecondTranslator implements Translator {
 
 	@Override

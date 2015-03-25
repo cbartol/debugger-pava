@@ -4,6 +4,7 @@ import javassist.ClassPool;
 import javassist.Loader;
 import javassist.Translator;
 
+@DoNotInspect
 public class DebuggerCLI {
 	
 	public static void main(String[] args) throws Throwable {

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+@DoNotInspect
 public class MyConsole {
 	private boolean continueRead = true;
 	private Command command;
