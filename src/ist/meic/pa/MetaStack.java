@@ -1,5 +1,6 @@
 package ist.meic.pa;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 
@@ -35,13 +36,14 @@ public class MetaStack {
 		return stack.peek().getInstance();
 	}
 
-	public static Object invokeLastMethod() {
-		try {
-			return stack.peek().getMethod().invoke(stack.peek().getInstance(), stack.peek().getArgs());
-		} catch (Exception e){
-			e.printStackTrace();
+	public static Object invokeLastMethod() throws Throwable{
+		try{
+			StackLayer layer = stack.peek();
+			stack.pop();
+			return layer.getMethod().invoke(layer.getInstance(), layer.getArgs());
+		} catch (InvocationTargetException e){
+			throw e.getTargetException();
 		}
-		return null;
 	}
 
 	public static void popStack() {

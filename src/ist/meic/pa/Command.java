@@ -80,7 +80,7 @@ public class Command {
 		}
 	}
 	
-	public void Retry(List<String> args){
+	public void Retry(List<String> args) throws Throwable{
 		console.setReturnValue(MetaStack.invokeLastMethod());
 		console.stopConsole();
 	}
