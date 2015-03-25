@@ -28,11 +28,22 @@ public class StackLayer {
 	public void print(){
 		String className = method.getDeclaringClass().getName();
 		String methodName = method.getName();
-		String argValues = "(";
-		for(Object arg : args){
-			argValues += arg + ",";
-		}
-		argValues = argValues.substring(0, argValues.length()-1) + ")";
+		String argValues = evaluateArgument(args);
+		argValues = argValues.substring(0, argValues.length()-1);
 		System.out.println(className+"."+methodName+argValues);
+	}
+	
+	private String evaluateArgument(Object o){
+		if(o instanceof Object[]){
+			String argValues = "(";
+			Object[] array = (Object[]) o;
+			for(Object arg : array){
+				argValues += evaluateArgument(arg);
+			}
+			argValues += ")";
+			return argValues;
+		} else {
+			return o.toString() + ",";
+		}
 	}
 }

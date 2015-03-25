@@ -1,14 +1,10 @@
 package ist.meic.pa;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class Command {
-	private Object lastObject;
-	private Map<String, Object> objects = new HashMap<String, Object>();
 	private MyConsole console;
 	
 	public Command(MyConsole myConsole) {
@@ -21,19 +17,21 @@ public class Command {
 	
 	public void Info(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
-		System.out.println("Called Object:"+instance);
+		Class clazz = MetaStack.getCurrentClass();
+		System.out.println("Called Object: "+instance);
+		String fieldsPrint = "\tFields:";
 		if(instance != null){
 			try {
-				String fieldsPrint = "\tFields:";
-				for (Field field : instance.getClass().getDeclaredFields()) {
+				for (Field field : clazz.getDeclaredFields()) {
 					field.setAccessible(true);
 					fieldsPrint += field.getName()+",";
 				}
-				System.out.println(fieldsPrint.substring(0, fieldsPrint.length()-1));
+				fieldsPrint = fieldsPrint.substring(0, fieldsPrint.length()-1);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		System.out.println(fieldsPrint);
 		System.out.println("Call stack:");
 		MetaStack.printStack();
 	}
@@ -43,7 +41,6 @@ public class Command {
 	}
 	
 	public void Return(List<String> args){
-		System.err.println("ENTROU RETURN COMMAND.JAVA");
 		if(args.size() == 0){
 			console.stopConsole();
 			return;
@@ -55,9 +52,14 @@ public class Command {
 	public void Get(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
 		try {
-			Field field = instance.getClass().getDeclaredField(args.get(0));
-			field.setAccessible(true);
-			System.out.println(field.get(instance));
+			if (instance == null){
+				MetaStack.getCurrentClass().getField(args.get(0));
+				System.err.println("NOT IMPLEMENTED YET, SET STATIC FIELDS");
+			} else{
+				Field field = instance.getClass().getDeclaredField(args.get(0));
+				field.setAccessible(true);
+				System.out.println(field.get(instance));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

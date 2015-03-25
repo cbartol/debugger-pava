@@ -10,7 +10,7 @@ public class DebuggerCLI {
 		
 		ClassPool pool = ClassPool.getDefault();
 		Loader cl = new Loader();
-		Translator t = new SecondTranslator();
+		Translator t = new ThirdTranslator();
 		cl.addTranslator(pool, t);
 		String[] shellArgs = new String[args.length-1];
 		

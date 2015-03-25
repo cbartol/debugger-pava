@@ -1,7 +1,5 @@
 package ist.meic.pa;
 
-import java.io.IOException;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -10,8 +8,10 @@ import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.Translator;
+import javassist.expr.ExprEditor;
+import javassist.expr.MethodCall;
 
-public class SecondTranslator implements Translator {
+public class ThirdTranslator implements Translator {
 
 	@Override
 	public void onLoad(ClassPool pool, String classname)
@@ -27,21 +27,42 @@ public class SecondTranslator implements Translator {
 				continue;
 			}
 			addTryCatch(cc,m);
+			instrumentForStack(cc,m);
 		}
 	}
 	
+	private void instrumentForStack(CtClass ctClass, CtMethod ctMethod) throws CannotCompileException, NotFoundException {
+		final String template = "{"
+				+ "ist.meic.pa.MetaStack.addInitialInformation($class,$0, $args, \"%s\", $sig);"  // o , ctMethod.getName()
+				+ "$_ = $proceed($$);"
+				+ "ist.meic.pa.MetaStack.popStack();"
+			+ "}";
+		
+		System.out.println(template);
+		
+		ctMethod.instrument(new ExprEditor(){
+			@Override
+			public void edit(MethodCall m) throws CannotCompileException {
+				m.replace(String.format(template, m.getMethodName()));
+				//super.edit(m);
+			}
+		});
+
+	}
+
 	private void addTryCatch(CtClass ctClass, CtMethod ctMethod) throws CannotCompileException, NotFoundException {
 		String name = ctMethod.getName();
 		final boolean isVoid = ctMethod.getReturnType().equals(CtClass.voidType);
+		ctMethod.setName(name + "$original");
+		
 		String o = "$0";
 		if(Modifier.isStatic(ctMethod.getModifiers())){
 			o = "null";
 		}
-		ctMethod.setName(name + "$original");
+		boolean isMain = name.equals("main");
 		ctMethod = CtNewMethod.copy(ctMethod, name, ctClass, null);
 		final String template = "{"
-				+ "Class[] args_types = %s;" // convertParametersTypes(ctMethod)
-				+ "ist.meic.pa.MetaStack.addInitialInformation($class,%s, $args, \"%s\", args_types);" // o , ctMethod.getName()
+				+ ((isMain)?"ist.meic.pa.MetaStack.addInitialInformation($class,%s, $args, \"%s\", $sig);":"")
 				+ "try{"
 					+ "%s;" // call to original method with or without return statement
 				+ "} catch(java.lang.Exception e){"
@@ -54,7 +75,7 @@ public class SecondTranslator implements Translator {
 							+ "%s;" //return statement ((isVoid)?returnVoid:returnNotVoid)
 					+ "}"
 				+ "} finally {"
-					+ "ist.meic.pa.MetaStack.popStack();"
+						+ "ist.meic.pa.MetaStack.popStack();"
 				+ "}"
 			+ "}";
 		
@@ -65,13 +86,19 @@ public class SecondTranslator implements Translator {
 			callMethod = "return " + callMethod;
 			returnStatement += " ($r) console.getReturnValue()";
 		}
-		final String code = String.format(template, convertParametersTypes(ctMethod), o, ctMethod.getName(), callMethod, ctMethod.getReturnType().getName(), returnStatement);
+		String code;
+		if(isMain){
+			code = String.format(template, o, name, callMethod, ctMethod.getReturnType().getName(), returnStatement);
+		} else {
+			code = String.format(template, callMethod, ctMethod.getReturnType().getName(), returnStatement);
+		}
 		System.out.println(code);
 		ctMethod.setBody(code);
 		ctClass.addMethod(ctMethod);
 
 	}
-
+	
+	
 	private String convertParametersTypes(CtMethod m){
 		String output = "";
 		try {

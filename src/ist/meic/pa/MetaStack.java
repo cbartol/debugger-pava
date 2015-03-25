@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 
-import javassist.CtClass;
-
 public class MetaStack {
 	private static Stack<StackLayer> stack = new Stack<StackLayer>();
 	
@@ -25,10 +23,10 @@ public class MetaStack {
 		}
 	}
 	
-
 	public static void printStack() {
-		for (StackLayer stackLayer : stack) {
-			stackLayer.print();
+		Object[] stackArray = stack.toArray();
+		for (int i = stackArray.length -1 ; i >= 0 ; i--) {
+			((StackLayer) stackArray[i]).print();
 		}
 	}
 
@@ -39,7 +37,6 @@ public class MetaStack {
 	public static Object invokeLastMethod() throws Throwable{
 		try{
 			StackLayer layer = stack.peek();
-			stack.pop();
 			return layer.getMethod().invoke(layer.getInstance(), layer.getArgs());
 		} catch (InvocationTargetException e){
 			throw e.getTargetException();
@@ -48,5 +45,9 @@ public class MetaStack {
 
 	public static void popStack() {
 		stack.pop();
+	}
+
+	public static Class getCurrentClass() {
+		return stack.peek().getMethod().getDeclaringClass();
 	}
 }

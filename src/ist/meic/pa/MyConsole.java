@@ -27,6 +27,7 @@ public class MyConsole {
 		
 		
 			while(continueRead){
+				e.printStackTrace();
 				System.out.print("> ");
 				String line = in.nextLine();
 				List<String> shellArgs = new ArrayList<String>();
@@ -66,7 +67,6 @@ public class MyConsole {
 	public void throwException(){
 		throwException = true;
 		stopConsole();
-		MetaStack.popStack();
 	}
 	
 	public void stopConsole(){
