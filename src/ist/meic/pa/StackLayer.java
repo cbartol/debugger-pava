@@ -37,7 +37,7 @@ public class StackLayer {
 		System.out.println(className+"."+methodName+argValues);
 	}
 	
-	private String evaluateArgument(Object o){
+	private Object evaluateArgument(Object o){
 		String argValues = "";
 		if(o instanceof Object[]){
 			argValues += "[";
@@ -48,7 +48,7 @@ public class StackLayer {
 			argValues = argValues.substring(0, argValues.length()-1) + "]";
 			return argValues;
 		} else {
-			return o.toString();
+			return o;
 		}
 	}
 }

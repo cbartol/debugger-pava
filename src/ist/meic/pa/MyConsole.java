@@ -14,6 +14,7 @@ public class MyConsole {
 	private boolean throwException = false;
 	private Object returnValue;
 	private String returnType;
+	private boolean mustRetry = false;
 	
 	public MyConsole(String returnType){
 		this.returnType = returnType;
@@ -21,8 +22,6 @@ public class MyConsole {
 	}
 	
 	public void execute(Throwable e) throws Throwable{
-//		System.out.println("executing");
-		
 		Scanner in = new Scanner(System.in);
 		continueRead = true;
 		
@@ -38,7 +37,6 @@ public class MyConsole {
 					m = Command.class.getMethod(shellArgs.get(0), List.class );
 					shellArgs.remove(0);
 				} catch (Exception e1) {
-					e1.printStackTrace();
 					System.err.println("Invalid Command");
 					continue;
 				}
@@ -76,4 +74,13 @@ public class MyConsole {
 	public String getReturnType() {
 		return returnType;
 	}
+
+	public boolean isRetry() {
+		return mustRetry;
+	}
+	
+	public void retry(){
+		mustRetry = true;
+	}
+	
 }

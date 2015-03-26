@@ -6,7 +6,12 @@ public class Foo {
 
 	public String bar(int a, int b) throws Exception{
 		System.out.println("yooo1");
+		xxx();
 		return "" + baz(a);
+	}
+	
+	public void xxx() throws Exception{
+		throw new Exception("super exception");
 	}
 	
 	public int baz(int a) throws Exception{

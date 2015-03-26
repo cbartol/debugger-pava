@@ -8,13 +8,8 @@ import java.util.Stack;
 public class MetaStack {
 	public static Stack<StackLayer> stack = new Stack<StackLayer>();
 	public static void pushInformation(Class c, Object o, String method, Class[] args_types, Object[] args){
-//		System.err.println("RECEBEU uni: " + args_types);
-//		
-//		System.out.println("changing stack");
-	
 		try {
 			Method m = c.getMethod(method, args_types);
-
 			stack.push(new StackLayer(o, m, args));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -32,13 +27,9 @@ public class MetaStack {
 		return stack.peek().getInstance();
 	}
 
-	public static Object invokeLastMethod() throws Throwable{
-		try{
-			StackLayer layer = stack.peek();
-			return layer.getMethod().invoke(layer.getInstance(), layer.getArgs());
-		} catch (InvocationTargetException e){
-			throw e.getTargetException();
-		}
+	public static Object retryThisMethod() throws Throwable{
+		StackLayer layer = stack.pop();
+		return ThirdTranslator.superMethodCall(layer.getMethod().getDeclaringClass(), layer.getInstance(), layer.getMethod().getReturnType().getName(), layer.getMethod().getParameterTypes(), layer.getMethod().getName(), layer.getArgs());
 	}
 
 	public static void popStack() {
