@@ -28,12 +28,15 @@ public class StackLayer {
 	
 	public void print(){
 		String className = method.getDeclaringClass().getName();
-		String methodName = method.getName();
+		String methodName = method.getName().split("\u200B")[0];
 		String argValues = "(";
 		for(Object arg : args){
 			argValues += evaluateArgument(arg) + ",";
 		}
-		argValues = argValues.substring(0, argValues.length()-1) + ")";
+		if(args.length > 0){
+			argValues = argValues.substring(0, argValues.length()-1);
+		}
+		argValues += ")";
 		System.out.println(className+"."+methodName+argValues);
 	}
 	

@@ -8,7 +8,8 @@ public class MetaStack {
 	public static Stack<StackLayer> stack = new Stack<StackLayer>();
 	public static void pushInformation(Class c, Object o, String method, Class[] args_types, Object[] args){
 		try {
-			Method m = c.getMethod(method, args_types);
+			Method m = c.getDeclaredMethod(method, args_types);
+			m.setAccessible(true);
 			stack.push(new StackLayer(o, m, args));
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -53,7 +53,7 @@ public class Command {
 		try {
 			Field field = null;
 			if (instance == null){
-				field = MetaStack.getCurrentClass().getField(args.get(0));
+				field = MetaStack.getCurrentClass().getDeclaredField(args.get(0));
 			} else{
 				field = instance.getClass().getDeclaredField(args.get(0));
 			}
@@ -69,7 +69,7 @@ public class Command {
 		try {
 			Field field = null;
 			if (instance == null){
-				field = MetaStack.getCurrentClass().getField(args.get(0));
+				field = MetaStack.getCurrentClass().getDeclaredField(args.get(0));
 			} else{
 				field = instance.getClass().getDeclaredField(args.get(0));
 			}

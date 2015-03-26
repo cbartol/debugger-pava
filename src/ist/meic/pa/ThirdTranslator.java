@@ -33,6 +33,7 @@ public class ThirdTranslator implements Translator {
 			if(m.isEmpty()){
 				continue;
 			}
+			instrumentForStack(cc,m);
 			if(m.getName().equals("main")){
 				String name = m.getName();
 				m.setName(name + "\u200B");
@@ -42,8 +43,8 @@ public class ThirdTranslator implements Translator {
 						+ "}";
 				m.setBody(code);
 				cc.addMethod(m);
+				instrumentForStack(cc,m);
 			}
-			instrumentForStack(cc,m);
 		}
 	}
 	

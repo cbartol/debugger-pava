@@ -21,7 +21,7 @@ public class Foo extends XYZ {
 		return "" + baz(a);
 	}
 	
-	public void xxx() throws Exception{
+	private void xxx() throws Exception{
 		throw new Exception("super exception");
 	}
 	
