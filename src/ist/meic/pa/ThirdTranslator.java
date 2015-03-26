@@ -1,5 +1,7 @@
 package ist.meic.pa;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -33,90 +35,34 @@ public class ThirdTranslator implements Translator {
 			if(m.isEmpty()){
 				continue;
 			}
-			addTryCatch(cc,m);
 			instrumentForStack(cc,m);
 		}
 	}
 	
 	private void instrumentForStack(CtClass ctClass, CtMethod ctMethod) throws CannotCompileException, NotFoundException {
-		final String template = "{"
-				+ "ist.meic.pa.MetaStack.addInitialInformation($class,$0, $args, \"%s\", $sig);"  // o , ctMethod.getName()
-				+ "$_ = $proceed($$);"
-				+ "ist.meic.pa.MetaStack.popStack();"
-			+ "}";
-		
-		System.out.println(template);
-		
 		ctMethod.instrument(new ExprEditor(){
 			@Override
 			public void edit(MethodCall m) throws CannotCompileException {
-				m.replace(String.format(template, m.getMethodName()));
-				//super.edit(m);
+				String template;
+				try {
+					if(m.getMethod().getReturnType().equals(CtClass.voidType)){
+						template = "{"
+								+ "ist.meic.pa.ThirdTranslator.superMethodCallVoid($class, $0,  \"%s\", $sig, \"%s\", $args);"
+								+ "}";
+					} else {
+						template = "{"
+								+ "$_ = ($r) ist.meic.pa.ThirdTranslator.superMethodCall($class, $0, \"%s\", $sig, \"%s\", $args);"
+								+ "}";
+					}
+					String code = String.format(template, m.getMethod().getReturnType().getName(), m.getMethodName());
+//					System.out.println(code);
+					m.replace(code);
+				} catch (NotFoundException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
-	}
-
-	private void addTryCatch(CtClass ctClass, CtMethod ctMethod) throws CannotCompileException, NotFoundException {
-		String name = ctMethod.getName();
-		final boolean isVoid = ctMethod.getReturnType().equals(CtClass.voidType);
-		ctMethod.setName(name + "$original");
-		
-		String o = "$0";
-		if(Modifier.isStatic(ctMethod.getModifiers())){
-			o = "null";
-		}
-		boolean isMain = name.equals("main");
-		ctMethod = CtNewMethod.copy(ctMethod, name, ctClass, null);
-		final String template = "{"
-				+ ((isMain)?"ist.meic.pa.MetaStack.addInitialInformation($class,%s, $args, \"%s\", $sig);":"")
-				+ "try{"
-					+ "%s;" // call to original method with or without return statement
-				+ "} catch(java.lang.Exception e){"
-					+ "System.out.println(e.getClass().getName() + \": \" + e.getMessage());"
-					+ "ist.meic.pa.MyConsole console = new ist.meic.pa.MyConsole(\"%s\");" //return type
-					+ "console.execute(e);"
-					+ "if(console.shouldThrowException()){"
-							+ "ist.meic.pa.MetaStack.popStack();"
-							+ "throw e;"
-					+ "}else{"
-							+ "%s;" //return statement ((isVoid)?returnVoid:returnNotVoid)
-					+ "}"
-				+ "} finally {"
-						+  ((isMain)?"ist.meic.pa.MetaStack.popStack();":"")
-				+ "}"
-			+ "}";
-		
-		String callMethod = name + "$original($$)";
-		String returnStatement = "return";
-		
-		if(!isVoid){
-			callMethod = "return " + callMethod;
-			returnStatement += " ($r) console.getReturnValue()";
-		}
-		String code;
-		if(isMain){
-			code = String.format(template, o, name, callMethod, ctMethod.getReturnType().getName(), returnStatement);
-		} else {
-			code = String.format(template, callMethod, ctMethod.getReturnType().getName(), returnStatement);
-		}
-		System.out.println(code);
-		ctMethod.setBody(code);
-		ctClass.addMethod(ctMethod);
-
-	}
-	
-	
-	private String convertParametersTypes(CtMethod m){
-		String output = "";
-		try {
-			for (CtClass c : m.getParameterTypes()) {
-				output += c.getName() + ".class,";
-			}
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-		}
-		return "{" + output.substring(0, output.length() - 1) + "}";	
 	}
 
 	@Override
@@ -124,4 +70,63 @@ public class ThirdTranslator implements Translator {
 			CannotCompileException {
 	}
 
+	public static Object superMethodCall(Class clazz, Object o, String returnType, Class[] argTypes, String methodName, Object... args) throws Throwable{
+//		System.out.println("--------------------------------");
+//		System.out.println(clazz);
+//		System.out.println(o);
+//		for (Class class1 : argTypes) {
+//			System.out.println(class1);
+//		}
+//		System.out.println(methodName);
+//		for (Object arg : args) {
+//			System.out.println(arg);
+//		}
+//		System.out.println("--------------------------------");
+		MetaStack.pushInformation(clazz, o, methodName, argTypes, args);
+		try {
+			return clazz.getMethod(methodName, argTypes).invoke(o, args);
+		} catch (InvocationTargetException e1) {
+			Throwable e = e1.getTargetException();
+			System.out.println(e.getClass().getName() + ": " + e.getMessage());
+			MyConsole console = new MyConsole(returnType); // return type
+			console.execute(e);
+			if (console.shouldThrowException()) {
+				throw e;
+			} else {
+				return console.getReturnValue();
+			}
+		} finally {
+			MetaStack.popStack();
+		}
+	}
+	
+	public static void superMethodCallVoid(Class clazz, Object o, String returnType, Class[] argTypes, String methodName, Object... args) throws Throwable{
+//		System.out.println("--------------------------------");
+//		System.out.println(clazz);
+//		System.out.println(o);
+//		for (Class class1 : argTypes) {
+//			System.out.println(class1);
+//		}
+//		System.out.println(methodName);
+//		for (Object arg : args) {
+//			System.out.println(arg);
+//		}
+//		System.out.println("--------------------------------");
+		MetaStack.pushInformation(clazz, o, methodName, argTypes, args);
+		try {
+			clazz.getMethod(methodName, argTypes).invoke(o, args);
+		} catch (InvocationTargetException e1) {
+			Throwable e = e1.getTargetException();
+			System.out.println(e.getClass().getName() + ": " + e.getMessage());
+			MyConsole console = new MyConsole(returnType); // return type
+			console.execute(e);
+			if (console.shouldThrowException()) {
+				throw e;
+			} else {
+				return;
+			}
+		} finally {
+			MetaStack.popStack();
+		}
+	}
 }

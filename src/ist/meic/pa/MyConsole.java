@@ -20,8 +20,8 @@ public class MyConsole {
 		command = new Command(this);
 	}
 	
-	public void execute(Exception e) throws Throwable{
-		System.out.println("executing");
+	public void execute(Throwable e) throws Throwable{
+//		System.out.println("executing");
 		
 		Scanner in = new Scanner(System.in);
 		continueRead = true;
@@ -54,11 +54,6 @@ public class MyConsole {
 	
 	public boolean shouldThrowException(){
 		return throwException;
-	}
-	
-	public boolean returnTypeIsVoid(){
-		System.out.println("is void?");
-		return false;
 	}
 	
 	public Object getReturnValue(){

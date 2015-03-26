@@ -19,6 +19,10 @@ public class DebuggerCLI {
 			shellArgs[i-1] = args[i];
 		}
 		
+		Class[] types = {String[].class};
+		MetaStack.pushInformation(Class.forName(args[0]), null, "main", types, shellArgs);
 		cl.run(args[0], shellArgs);
+		System.out.println(MetaStack.stack.size());
+		MetaStack.popStack();
 	}
 }

@@ -6,14 +6,11 @@ import java.util.Stack;
 
 @DoNotInspect
 public class MetaStack {
-	private static Stack<StackLayer> stack = new Stack<StackLayer>();
-	
-	public static void addInitialInformation(Class c, Object o, Object[] args, String method, Class[] args_types){
-
-		
-		System.err.println("RECEBEU uni: " + args_types);
-		
-		System.out.println("changing stack");
+	public static Stack<StackLayer> stack = new Stack<StackLayer>();
+	public static void pushInformation(Class c, Object o, String method, Class[] args_types, Object[] args){
+//		System.err.println("RECEBEU uni: " + args_types);
+//		
+//		System.out.println("changing stack");
 	
 		try {
 			Method m = c.getMethod(method, args_types);
