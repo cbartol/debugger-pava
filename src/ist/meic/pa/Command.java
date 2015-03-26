@@ -20,20 +20,19 @@ public class Command {
 		Class clazz = MetaStack.getCurrentClass();
 		System.out.println("Called Object: "+instance);
 		String fieldsPrint = "\tFields:";
-		if(instance != null){
-			try {
-				for (Field field : clazz.getDeclaredFields()) {
-					field.setAccessible(true);
-					fieldsPrint += field.getName()+",";
-				}
-				fieldsPrint = fieldsPrint.substring(0, fieldsPrint.length()-1);
-			} catch (Exception e) {
-				e.printStackTrace();
+		try {
+			for (Field field : clazz.getDeclaredFields()) {
+				field.setAccessible(true);
+				fieldsPrint += field.getName()+" ";
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		System.out.println(fieldsPrint);
 		System.out.println("Call stack:");
 		MetaStack.printStack();
+		final Throwable exception = console.getException();
+		System.out.println("Throwable: " + exception.getClass().getName() + ": " + exception.getMessage());
 	}
 	
 	public void Throw(List<String> args){

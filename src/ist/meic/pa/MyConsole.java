@@ -15,6 +15,7 @@ public class MyConsole {
 	private Object returnValue;
 	private String returnType;
 	private boolean mustRetry = false;
+	private Throwable exception;
 	
 	public MyConsole(String returnType){
 		this.returnType = returnType;
@@ -24,7 +25,7 @@ public class MyConsole {
 	public void execute(Throwable e) throws Throwable{
 		Scanner in = new Scanner(System.in);
 		continueRead = true;
-		
+		exception = e;
 		
 			while(continueRead){
 				//e.printStackTrace();
@@ -48,6 +49,10 @@ public class MyConsole {
 			}
 		
 		//in.close();
+	}
+	
+	public Throwable getException(){
+		return exception;
 	}
 	
 	public boolean shouldThrowException(){

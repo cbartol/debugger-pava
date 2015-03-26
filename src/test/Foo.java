@@ -1,10 +1,21 @@
 package test;
 
-public class Foo {
+public class Foo extends XYZ {
+
+	
 	
 	private int field1 = 999;
 
+	Foo(){
+	}
+
+	Foo(int i){
+		super(i);
+	}
+	
+	
 	public String bar(int a, int b) throws Exception{
+		Foo f = new Foo(1);
 		System.out.println("yooo1");
 		xxx();
 		return "" + baz(a);

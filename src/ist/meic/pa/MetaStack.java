@@ -1,6 +1,5 @@
 package ist.meic.pa;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 
