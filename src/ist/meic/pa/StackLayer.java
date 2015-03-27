@@ -43,12 +43,13 @@ public class StackLayer {
 	private Object evaluateArgument(Object o){
 		String argValues = "";
 		if(o instanceof Object[]){
-			argValues += "[";
+//			argValues += "[";
 			Object[] array = (Object[]) o;
 			for(Object arg : array){
 				argValues += evaluateArgument(arg) + ",";
 			}
-			argValues = argValues.substring(0, argValues.length()-1) + "]";
+			argValues = argValues.substring(0, argValues.length()-1);
+//			argValues += "]";
 			return argValues;
 		} else {
 			return o;

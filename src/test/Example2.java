@@ -2,11 +2,11 @@ package test;
 
 public class Example2 {
 	
-	public static int fact(int foo, int a) {
+	public static int fact(int foo) {
 		if (foo < 1) {
 			throw new RuntimeException("foo < 1");
 		}
-		return foo*fact(foo-1, 1);
+		return foo*fact(foo-1);
 	}
 	
 	public static int bar(String arg) {
@@ -20,7 +20,7 @@ public class Example2 {
 		System.out.println("Started");
 		for(String arg : args) {
 			try {
-				System.out.println(fact(bar(arg), 1));
+				System.out.println(fact(bar(arg)));
 			} catch(RuntimeException re) {
 				System.out.println("Exception caught!");
 			}
