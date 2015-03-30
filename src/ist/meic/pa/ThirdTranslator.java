@@ -63,6 +63,9 @@ public class ThirdTranslator implements Translator {
 			Object result = clazz.getMethod(methodName, argTypes).invoke(o, args); 
 			MetaStack.popStack();
 			return result; 
+		}catch(NullPointerException e){
+			MetaStack.popStack();
+			throw e;
 		} catch (InvocationTargetException e1) {
 			Throwable e = e1.getTargetException();
 			System.out.println(e.getClass().getName() + ": " + e.getMessage());
