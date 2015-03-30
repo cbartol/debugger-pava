@@ -29,7 +29,7 @@ public class MyConsole {
 		
 			while(continueRead){
 				//e.printStackTrace();
-				System.out.print("> ");
+				System.out.print("DebuggerCLI:> ");
 				String line = in.nextLine();
 				List<String> shellArgs = new ArrayList<String>();
 				shellArgs.addAll(Arrays.asList(line.split(" ")));
