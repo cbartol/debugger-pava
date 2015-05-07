@@ -48,7 +48,9 @@ public class StackLayer {
 			for(Object arg : array){
 				argValues += evaluateArgument(arg) + ",";
 			}
-			argValues = argValues.substring(0, argValues.length()-1);
+			if(array.length > 0){
+				argValues = argValues.substring(0, argValues.length()-1);
+			}
 //			argValues += "]";
 			return argValues;
 		} else {

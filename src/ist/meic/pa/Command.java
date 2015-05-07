@@ -20,14 +20,17 @@ public class Command {
 		Class clazz = MetaStack.getCurrentClass();
 		System.out.println("Called Object: "+instance);
 		String fieldsPrint = "\tFields:";
-		try {
-			for (Field field : clazz.getDeclaredFields()) {
-				field.setAccessible(true);
-				fieldsPrint += field.getName()+" ";
+		do{
+			try {
+				for (Field field : clazz.getDeclaredFields()) {
+					field.setAccessible(true);
+					fieldsPrint += field.getName()+" ";
+				}
+				clazz = clazz.getSuperclass();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} while(clazz.getSuperclass() != null);
 		System.out.println(fieldsPrint);
 		System.out.println("Call stack:");
 		MetaStack.printStack();
@@ -50,35 +53,49 @@ public class Command {
 	
 	public void Get(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
-		try {
-			Field field = null;
-			if (instance == null){
-				field = MetaStack.getCurrentClass().getDeclaredField(args.get(0));
-			} else{
-				field = instance.getClass().getDeclaredField(args.get(0));
-			}
-			field.setAccessible(true);
-			System.out.println(field.get(instance));
-		} catch (Exception e) {
-			e.printStackTrace();
+		Class clazz = null;
+		if(instance == null){
+			clazz = MetaStack.getCurrentClass();
+		} else {
+			clazz = instance.getClass();
 		}
+
+		do{
+			try {
+				Field field = null;
+				field = clazz.getDeclaredField(args.get(0));
+				field.setAccessible(true);
+				System.out.println(field.get(instance));
+				clazz = null;
+			} catch (Exception e) {
+				clazz = clazz.getSuperclass();
+//				e.printStackTrace();
+			}
+		} while(clazz != null);
 	}
 
 	public void Set(List<String> args){
 		Object instance = MetaStack.getCurrentInstance();
-		try {
-			Field field = null;
-			if (instance == null){
-				field = MetaStack.getCurrentClass().getDeclaredField(args.get(0));
-			} else{
-				field = instance.getClass().getDeclaredField(args.get(0));
-			}
-			field.setAccessible(true);
-			String fieldType = field.getType().getName();
-			field.set(instance, magicStringConverter(fieldType, args.get(1)));
-		} catch (Exception e) {
-			e.printStackTrace();
+		Class clazz = null;
+		if(instance == null){
+			clazz = MetaStack.getCurrentClass();
+		} else {
+			clazz = instance.getClass();
 		}
+
+		do{
+			try {
+				Field field = null;
+				field = clazz.getDeclaredField(args.get(0));
+				field.setAccessible(true);
+				String fieldType = field.getType().getName();
+				field.set(instance, magicStringConverter(fieldType, args.get(1)));
+				clazz = null;
+			} catch (Exception e) {
+				clazz = clazz.getSuperclass();
+//				e.printStackTrace();
+			}
+		} while(clazz != null);
 	}
 	
 	public void Retry(List<String> args) throws Throwable{
